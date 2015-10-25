@@ -16,6 +16,10 @@
 
 package com.codetroopers.betterpickers.radialtimepicker;
 
+import android.animation.Keyframe;
+import android.animation.ObjectAnimator;
+import android.animation.PropertyValuesHolder;
+import android.animation.ValueAnimator;
 import android.content.Context;
 import android.content.res.Resources;
 import android.content.res.TypedArray;
@@ -26,11 +30,6 @@ import android.view.View;
 
 import com.codetroopers.betterpickers.R;
 import com.codetroopers.betterpickers.Utils;
-import com.nineoldandroids.animation.Keyframe;
-import com.nineoldandroids.animation.ObjectAnimator;
-import com.nineoldandroids.animation.PropertyValuesHolder;
-import com.nineoldandroids.animation.ValueAnimator;
-import com.nineoldandroids.view.animation.AnimatorProxy;
 
 /**
  * View to show what number is selected. This will draw a blue circle over the number, with a blue line coming from the
@@ -80,18 +79,18 @@ public class RadialSelectorView extends View {
     /**
      * Initialize this selector with the state of the picker.
      *
-     * @param context Current context.
-     * @param is24HourMode Whether the selector is in 24-hour mode, which will tell us whether the circle's center is
-     * moved up slightly to make room for the AM/PM circles.
-     * @param hasInnerCircle Whether we have both an inner and an outer circle of numbers that may be selected. Should
-     * be true for 24-hour mode in the hours circle.
-     * @param disappearsOut Whether the numbers' animation will have them disappearing out or disappearing in.
+     * @param context          Current context.
+     * @param is24HourMode     Whether the selector is in 24-hour mode, which will tell us whether the circle's center is
+     *                         moved up slightly to make room for the AM/PM circles.
+     * @param hasInnerCircle   Whether we have both an inner and an outer circle of numbers that may be selected. Should
+     *                         be true for 24-hour mode in the hours circle.
+     * @param disappearsOut    Whether the numbers' animation will have them disappearing out or disappearing in.
      * @param selectionDegrees The initial degrees to be selected.
-     * @param isInnerCircle Whether the initial selection is in the inner or outer circle. Will be ignored when
-     * hasInnerCircle is false.
+     * @param isInnerCircle    Whether the initial selection is in the inner or outer circle. Will be ignored when
+     *                         hasInnerCircle is false.
      */
     public void initialize(Context context, boolean is24HourMode, boolean hasInnerCircle,
-            boolean disappearsOut, int selectionDegrees, boolean isInnerCircle) {
+                           boolean disappearsOut, int selectionDegrees, boolean isInnerCircle) {
         if (mIsInitialized) {
             Log.e(TAG, "This RadialSelectorView may only be initialized once.");
             return;
@@ -147,10 +146,10 @@ public class RadialSelectorView extends View {
      * Set the selection.
      *
      * @param selectionDegrees The degrees to be selected.
-     * @param isInnerCircle Whether the selection should be in the inner circle or outer. Will be ignored if
-     * hasInnerCircle was initialized to false.
-     * @param forceDrawDot Whether to force the dot in the center of the selection circle to be drawn. If false, the dot
-     * will be drawn only when the degrees is not a multiple of 30, i.e. the selection is not on a visible number.
+     * @param isInnerCircle    Whether the selection should be in the inner circle or outer. Will be ignored if
+     *                         hasInnerCircle was initialized to false.
+     * @param forceDrawDot     Whether to force the dot in the center of the selection circle to be drawn. If false, the dot
+     *                         will be drawn only when the degrees is not a multiple of 30, i.e. the selection is not on a visible number.
      */
     public void setSelection(int selectionDegrees, boolean isInnerCircle, boolean forceDrawDot) {
         mSelectionDegrees = selectionDegrees;
@@ -182,7 +181,7 @@ public class RadialSelectorView extends View {
     }
 
     public int getDegreesFromCoords(float pointX, float pointY, boolean forceLegal,
-            final Boolean[] isInnerCircle) {
+                                    final Boolean[] isInnerCircle) {
         if (!mDrawValuesReady) {
             return -1;
         }
@@ -329,9 +328,7 @@ public class RadialSelectorView extends View {
         kf1 = Keyframe.ofFloat(1f, 0f);
         PropertyValuesHolder fadeOut = PropertyValuesHolder.ofKeyframe("alpha", kf0, kf1);
 
-        ObjectAnimator disappearAnimator = ObjectAnimator.ofPropertyValuesHolder(
-                AnimatorProxy.NEEDS_PROXY ? AnimatorProxy.wrap(this) : this, radiusDisappear, fadeOut).setDuration(
-                duration);
+        ObjectAnimator disappearAnimator = ObjectAnimator.ofPropertyValuesHolder(this, radiusDisappear, fadeOut).setDuration(duration);
         disappearAnimator.addUpdateListener(mInvalidateUpdateListener);
 
         return disappearAnimator;
@@ -369,9 +366,7 @@ public class RadialSelectorView extends View {
         kf2 = Keyframe.ofFloat(1f, 1f);
         PropertyValuesHolder fadeIn = PropertyValuesHolder.ofKeyframe("alpha", kf0, kf1, kf2);
 
-        ObjectAnimator reappearAnimator = ObjectAnimator.ofPropertyValuesHolder(
-                AnimatorProxy.NEEDS_PROXY ? AnimatorProxy.wrap(this) : this, radiusReappear, fadeIn)
-                .setDuration(totalDuration);
+        ObjectAnimator reappearAnimator = ObjectAnimator.ofPropertyValuesHolder(this, radiusReappear, fadeIn).setDuration(totalDuration);
         reappearAnimator.addUpdateListener(mInvalidateUpdateListener);
         return reappearAnimator;
     }

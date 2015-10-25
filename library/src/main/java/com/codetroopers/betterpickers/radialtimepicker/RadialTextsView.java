@@ -16,6 +16,10 @@
 
 package com.codetroopers.betterpickers.radialtimepicker;
 
+import android.animation.Keyframe;
+import android.animation.ObjectAnimator;
+import android.animation.PropertyValuesHolder;
+import android.animation.ValueAnimator;
 import android.content.Context;
 import android.content.res.Resources;
 import android.content.res.TypedArray;
@@ -27,11 +31,6 @@ import android.util.Log;
 import android.view.View;
 
 import com.codetroopers.betterpickers.R;
-import com.nineoldandroids.animation.Keyframe;
-import com.nineoldandroids.animation.ObjectAnimator;
-import com.nineoldandroids.animation.PropertyValuesHolder;
-import com.nineoldandroids.animation.ValueAnimator;
-import com.nineoldandroids.view.animation.AnimatorProxy;
 
 /**
  * A view to show a series of numbers in a circular pattern.
@@ -82,7 +81,7 @@ public class RadialTextsView extends View {
     }
 
     public void initialize(Resources res, String[] texts, String[] innerTexts,
-            boolean is24HourMode, boolean disappearsOut) {
+                           boolean is24HourMode, boolean disappearsOut) {
         if (mIsInitialized) {
             Log.e(TAG, "This RadialTextsView may only be initialized once.");
             return;
@@ -227,7 +226,7 @@ public class RadialTextsView extends View {
      * specified circle radius. Place the values in the textGridHeights and textGridWidths parameters.
      */
     private void calculateGridSizes(float numbersRadius, float xCenter, float yCenter,
-            float textSize, float[] textGridHeights, float[] textGridWidths) {
+                                    float textSize, float[] textGridHeights, float[] textGridWidths) {
         /*
          * The numbers need to be drawn in a 7x7 grid, representing the points on the Unit Circle.
          */
@@ -260,7 +259,7 @@ public class RadialTextsView extends View {
      * Draw the 12 text values at the positions specified by the textGrid parameters.
      */
     private void drawTexts(Canvas canvas, float textSize, Typeface typeface, String[] texts,
-            float[] textGridWidths, float[] textGridHeights) {
+                           float[] textGridWidths, float[] textGridHeights) {
         mPaint.setTextSize(textSize);
         mPaint.setTypeface(typeface);
         canvas.drawText(texts[0], textGridWidths[3], textGridHeights[0], mPaint);
@@ -289,16 +288,13 @@ public class RadialTextsView extends View {
         kf0 = Keyframe.ofFloat(0f, 1);
         kf1 = Keyframe.ofFloat(midwayPoint, mTransitionMidRadiusMultiplier);
         kf2 = Keyframe.ofFloat(1f, mTransitionEndRadiusMultiplier);
-        PropertyValuesHolder radiusDisappear = PropertyValuesHolder.ofKeyframe(
-                "animationRadiusMultiplier", kf0, kf1, kf2);
+        PropertyValuesHolder radiusDisappear = PropertyValuesHolder.ofKeyframe("animationRadiusMultiplier", kf0, kf1, kf2);
 
         kf0 = Keyframe.ofFloat(0f, 1f);
         kf1 = Keyframe.ofFloat(1f, 0f);
         PropertyValuesHolder fadeOut = PropertyValuesHolder.ofKeyframe("alpha", kf0, kf1);
 
-        mDisappearAnimator = ObjectAnimator.ofPropertyValuesHolder(
-                AnimatorProxy.NEEDS_PROXY ? AnimatorProxy.wrap(this) : this, radiusDisappear, fadeOut)
-                .setDuration(duration);
+        mDisappearAnimator = ObjectAnimator.ofPropertyValuesHolder(this, radiusDisappear, fadeOut).setDuration(duration);
         mDisappearAnimator.addUpdateListener(mInvalidateUpdateListener);
 
         // Set up animator for reappearing.
@@ -321,9 +317,7 @@ public class RadialTextsView extends View {
         kf2 = Keyframe.ofFloat(1f, 1f);
         PropertyValuesHolder fadeIn = PropertyValuesHolder.ofKeyframe("alpha", kf0, kf1, kf2);
 
-        mReappearAnimator = ObjectAnimator.ofPropertyValuesHolder(
-                AnimatorProxy.NEEDS_PROXY ? AnimatorProxy.wrap(this) : this, radiusReappear, fadeIn)
-                .setDuration(totalDuration);
+        mReappearAnimator = ObjectAnimator.ofPropertyValuesHolder(this, radiusReappear, fadeIn).setDuration(totalDuration);
         mReappearAnimator.addUpdateListener(mInvalidateUpdateListener);
     }
 
