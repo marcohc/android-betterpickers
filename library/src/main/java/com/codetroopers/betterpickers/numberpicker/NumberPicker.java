@@ -65,7 +65,7 @@ public class NumberPicker extends LinearLayout implements Button.OnClickListener
      * Instantiates a NumberPicker object
      *
      * @param context the Context required for creation
-     * @param attrs additional attributes that define custom colors, selectors, and backgrounds.
+     * @param attrs   additional attributes that define custom colors, selectors, and backgrounds.
      */
     public NumberPicker(Context context, AttributeSet attrs) {
         super(context, attrs);
@@ -602,9 +602,13 @@ public class NumberPicker extends LinearLayout implements Button.OnClickListener
 
         private SavedState(Parcel in) {
             super(in);
-            mInputPointer = in.readInt();
-            in.readIntArray(mInput);
-            mSign = in.readInt();
+            try {
+                mInputPointer = in.readInt();
+                in.readIntArray(mInput);
+                mSign = in.readInt();
+            } catch (NullPointerException e) {
+                mSign = SIGN_POSITIVE;
+            }
         }
 
         @Override
@@ -615,8 +619,7 @@ public class NumberPicker extends LinearLayout implements Button.OnClickListener
             dest.writeInt(mSign);
         }
 
-        public static final Creator<SavedState> CREATOR
-                = new Creator<SavedState>() {
+        public static final Creator<SavedState> CREATOR = new Creator<SavedState>() {
             public SavedState createFromParcel(Parcel in) {
                 return new SavedState(in);
             }
